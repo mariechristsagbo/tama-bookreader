@@ -28,12 +28,14 @@ function validatePdf(file: File) {
 
 export function PdfBookReader({ initialBook }: PdfBookReaderProps) {
   const activeDocument = useRef<PDFDocumentProxy | null>(null);
+  const latestRequest = useRef(0);
   const [book, setBook] = useState(initialBook);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     return () => {
+      latestRequest.current += 1;
       if (activeDocument.current) releasePdfDocument(activeDocument.current);
     };
   }, []);
@@ -48,9 +50,17 @@ export function PdfBookReader({ initialBook }: PdfBookReaderProps) {
 
     setError(null);
     setIsLoading(true);
+    const requestId = latestRequest.current + 1;
+    latestRequest.current = requestId;
 
     try {
       const result = await loadPdfBook(file);
+
+      if (requestId !== latestRequest.current) {
+        releasePdfDocument(result.document);
+        return;
+      }
+
       const previousDocument = activeDocument.current;
 
       activeDocument.current = result.document;
@@ -58,9 +68,11 @@ export function PdfBookReader({ initialBook }: PdfBookReaderProps) {
 
       if (previousDocument) releasePdfDocument(previousDocument);
     } catch {
-      setError("This PDF could not be opened. It may be damaged or password protected.");
+      if (requestId === latestRequest.current) {
+        setError("This PDF could not be opened. It may be damaged or password protected.");
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === latestRequest.current) setIsLoading(false);
     }
   };
 

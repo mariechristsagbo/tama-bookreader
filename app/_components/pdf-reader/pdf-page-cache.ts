@@ -2,7 +2,15 @@ import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { PdfPageAsset } from "../book-sources/types";
 
 const PDF_PAGE_WIDTH = 1400;
-const pageCaches = new WeakMap<PDFDocumentProxy, Map<number, Promise<string>>>();
+const MAX_CACHED_PAGES = 12;
+
+type CacheEntry = {
+  promise: Promise<string>;
+};
+
+type DocumentCache = Map<number, CacheEntry>;
+
+const pageCaches = new WeakMap<PDFDocumentProxy, DocumentCache>();
 
 function canvasToBlob(canvas: HTMLCanvasElement) {
   return new Promise<Blob>((resolve, reject) => {
@@ -23,30 +31,51 @@ function canvasToBlob(canvas: HTMLCanvasElement) {
 
 async function renderPdfPage(asset: PdfPageAsset) {
   const page = await asset.document.getPage(asset.pageNumber);
-  const baseViewport = page.getViewport({ scale: 1 });
-  const viewport = page.getViewport({
-    scale: PDF_PAGE_WIDTH / baseViewport.width,
-  });
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d", { alpha: false });
 
-  if (!context) {
-    throw new Error("Canvas rendering is unavailable in this browser.");
+  try {
+    const baseViewport = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({
+      scale: PDF_PAGE_WIDTH / baseViewport.width,
+    });
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", { alpha: false });
+
+    if (!context) {
+      throw new Error("Canvas rendering is unavailable in this browser.");
+    }
+
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
+
+    await page.render({
+      canvas,
+      canvasContext: context,
+      viewport,
+    }).promise;
+
+    const blob = await canvasToBlob(canvas);
+    return URL.createObjectURL(blob);
+  } finally {
+    page.cleanup();
   }
+}
 
-  canvas.width = Math.ceil(viewport.width);
-  canvas.height = Math.ceil(viewport.height);
+function revokeWhenReady(entry: CacheEntry) {
+  void entry.promise
+    .then((url) => URL.revokeObjectURL(url))
+    .catch(() => undefined);
+}
 
-  await page.render({
-    canvas,
-    canvasContext: context,
-    viewport,
-  }).promise;
+function trimCache(cache: DocumentCache) {
+  while (cache.size > MAX_CACHED_PAGES) {
+    const oldestPage = cache.keys().next().value;
+    if (oldestPage === undefined) return;
 
-  const blob = await canvasToBlob(canvas);
-  page.cleanup();
+    const entry = cache.get(oldestPage);
+    cache.delete(oldestPage);
 
-  return URL.createObjectURL(blob);
+    if (entry) revokeWhenReady(entry);
+  }
 }
 
 export function getPdfPageUrl(asset: PdfPageAsset) {
@@ -58,28 +87,45 @@ export function getPdfPageUrl(asset: PdfPageAsset) {
   }
 
   const cachedPage = documentCache.get(asset.pageNumber);
-  if (cachedPage) return cachedPage;
-
-  const pagePromise = renderPdfPage(asset).catch((error) => {
+  if (cachedPage) {
     documentCache.delete(asset.pageNumber);
-    throw error;
+    documentCache.set(asset.pageNumber, cachedPage);
+    return cachedPage.promise;
+  }
+
+  const entry: CacheEntry = {
+    promise: renderPdfPage(asset),
+  };
+
+  documentCache.set(asset.pageNumber, entry);
+  trimCache(documentCache);
+
+  void entry.promise.catch(() => {
+    if (documentCache.get(asset.pageNumber) === entry) {
+      documentCache.delete(asset.pageNumber);
+    }
   });
 
-  documentCache.set(asset.pageNumber, pagePromise);
-  return pagePromise;
+  return entry.promise;
 }
 
 export function releasePdfDocument(document: PDFDocumentProxy) {
   const documentCache = pageCaches.get(document);
 
   if (documentCache) {
-    void Promise.allSettled(documentCache.values()).then((results) => {
-      for (const result of results) {
-        if (result.status === "fulfilled") URL.revokeObjectURL(result.value);
-      }
-    });
+    const entries = Array.from(documentCache.values());
     pageCaches.delete(document);
+
+    void Promise.allSettled(entries.map((entry) => entry.promise))
+      .then((results) => {
+        for (const result of results) {
+          if (result.status === "fulfilled") URL.revokeObjectURL(result.value);
+        }
+      })
+      .then(() => document.loadingTask.destroy())
+      .catch(() => undefined);
+    return;
   }
 
-  void document.loadingTask.destroy();
+  void document.loadingTask.destroy().catch(() => undefined);
 }
