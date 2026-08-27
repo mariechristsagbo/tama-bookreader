@@ -15,6 +15,14 @@ function getLastSpreadStart(totalPages: number) {
   return totalPages % 2 === 0 ? totalPages - 1 : totalPages;
 }
 
+function getPageLabel(book: BookDefinition, page: number) {
+  return page + (book.pageNumbering?.offset ?? 0);
+}
+
+function getTotalPageLabel(book: BookDefinition) {
+  return book.pageNumbering?.total ?? book.pages.length;
+}
+
 export function getSpread(book: BookDefinition, page: number): Spread {
   if (page === 0) {
     return { label: "Cover", left: null, right: book.cover };
@@ -23,7 +31,7 @@ export function getSpread(book: BookDefinition, page: number): Spread {
   const firstPage = getSpreadStart(page);
 
   return {
-    label: `Page ${firstPage} of ${book.pages.length}`,
+    label: `Page ${getPageLabel(book, firstPage)} of ${getTotalPageLabel(book)}`,
     left: getPage(book, firstPage),
     right: getPage(book, firstPage + 1),
   };
@@ -63,7 +71,7 @@ export function getBookStatus(
   return {
     label:
       isMobile && currentPage > 0
-        ? `Page ${currentPage} of ${totalPages}`
+        ? `Page ${getPageLabel(book, currentPage)} of ${getTotalPageLabel(book)}`
         : spread.label,
     previousDisabled: currentPage === 0,
     nextDisabled:

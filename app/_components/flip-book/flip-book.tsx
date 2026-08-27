@@ -55,42 +55,40 @@ export function FlipBook({ book }: FlipBookProps) {
   return (
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domAnimation} strict>
-        <main className="min-h-dvh w-full overflow-clip bg-[var(--book-background)] px-4 py-5 min-[810px]:px-12 min-[810px]:py-12">
-          <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-[10px]">
-            <section
-              aria-label={book.ariaLabel}
-              className="relative isolate aspect-[2/3] w-full overflow-hidden rounded-[var(--book-stage-radius)] [perspective:2200px] min-[810px]:aspect-[4/3]"
-            >
-              <StaticBook
+        <div className="flex w-full flex-col gap-[10px]">
+          <section
+            aria-label={book.ariaLabel}
+            className="relative isolate aspect-[2/3] w-full overflow-hidden rounded-[var(--book-stage-radius)] [perspective:2200px] min-[810px]:aspect-[4/3]"
+          >
+            <StaticBook
+              book={book}
+              currentPage={currentPage}
+              isMobile={isMobile}
+            />
+            {turn ? (
+              <TurnLayer
                 book={book}
-                currentPage={currentPage}
                 isMobile={isMobile}
+                turn={turn}
+                onComplete={() => setTurn(null)}
               />
-              {turn ? (
-                <TurnLayer
-                  book={book}
-                  isMobile={isMobile}
-                  turn={turn}
-                  onComplete={() => setTurn(null)}
-                />
-              ) : null}
-              <PageHotspots
-                isTurning={turn !== null}
-                previousDisabled={previousDisabled}
-                nextDisabled={nextDisabled}
-                onNavigate={navigate}
-              />
-            </section>
-
-            <BookControls
+            ) : null}
+            <PageHotspots
               isTurning={turn !== null}
-              label={label}
               previousDisabled={previousDisabled}
               nextDisabled={nextDisabled}
               onNavigate={navigate}
             />
-          </div>
-        </main>
+          </section>
+
+          <BookControls
+            isTurning={turn !== null}
+            label={label}
+            previousDisabled={previousDisabled}
+            nextDisabled={nextDisabled}
+            onNavigate={navigate}
+          />
+        </div>
       </LazyMotion>
     </MotionConfig>
   );

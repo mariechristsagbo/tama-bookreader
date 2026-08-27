@@ -32,6 +32,7 @@ const pages: readonly PageAsset[] = Array.from(
 
     return {
       alt: `Atomic Habits page ${page}`,
+      kind: "image" as const,
       src: REAL_PAGES[page] ?? makePlaceholderPage(page),
     };
   },
@@ -41,7 +42,10 @@ export const ATOMIC_HABITS_BOOK: BookDefinition = {
   ariaLabel: "Atomic Habits flip book",
   cover: {
     alt: "Atomic Habits book cover",
+    kind: "image",
     src: "/book/cover.png",
   },
+  id: "atomic-habits",
   pages,
+  title: "Atomic Habits",
 };
