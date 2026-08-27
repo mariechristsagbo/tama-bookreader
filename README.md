@@ -1,6 +1,6 @@
 # Tama Book Reader
 
-An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Motion. The reader recreates the feel of turning physical pages while keeping the content accessible and usable across desktop and mobile devices.
+An interactive, responsive 2D/3D PDF reader built with Next.js, Tailwind CSS, Motion, and PDF.js. Open a local PDF or use image-based pages to recreate the feel of turning a physical book across desktop and mobile devices.
 
 ## Demo
 
@@ -14,6 +14,8 @@ An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Mot
 - Responsive single-page and two-page layouts
 - Previous and next navigation through controls or page hotspots
 - Reduced-motion support based on the user’s system preferences
+- Local PDF loading with no server upload
+- Progressive PDF page rendering and caching
 - Reusable book configuration independent from the reader engine
 - Support for real page images and generated placeholders
 - Statically rendered Next.js entry page
@@ -24,6 +26,7 @@ An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Mot
 - [React 19](https://react.dev/)
 - [Tailwind CSS 4](https://tailwindcss.com/)
 - [Motion](https://motion.dev/) for page-turn animations
+- [PDF.js](https://mozilla.github.io/pdf.js/) for PDF parsing and rendering
 - TypeScript
 - pnpm
 
@@ -77,7 +80,9 @@ public/book/                # Cover and page images
 
 ## Using Another Book
 
-The reader receives a `BookDefinition`, so its content can be replaced without changing the animation or navigation components.
+Select **Open PDF** in the reader to open a local document. The file is processed directly in the browser and is not uploaded to a server.
+
+The reader also accepts a `BookDefinition`, so image-based content can be replaced without changing the animation or navigation components.
 
 1. Add the cover and page assets to `public/book/`.
 2. Update the definition in `app/_components/flip-book/book-data.ts`.
