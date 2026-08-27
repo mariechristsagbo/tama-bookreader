@@ -92,9 +92,3 @@ Before opening a pull request, run:
 pnpm lint
 pnpm build
 ```
-
-## Design Reference
-
-This project is an independent implementation inspired by the [2D Flipbook Framer reference](https://2d-flipbook.framer.website/).
-
-Book cover and page imagery belong to their respective rights holders and are included here for visual demonstration purposes.
