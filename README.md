@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tama Book Reader
+
+An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Motion. The reader recreates the feel of turning physical pages while keeping the content accessible and usable across desktop and mobile devices.
+
+## Demo
+
+Demo videos will be added soon.
+
+## Features
+
+- Realistic 3D page-turn animations
+- Responsive single-page and two-page layouts
+- Previous and next navigation through controls or page hotspots
+- Reduced-motion support based on the user’s system preferences
+- Reusable book configuration independent from the reader engine
+- Support for real page images and generated placeholders
+- Statically rendered Next.js entry page
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org/) with the App Router
+- [React 19](https://react.dev/)
+- [Tailwind CSS 4](https://tailwindcss.com/)
+- [Motion](https://motion.dev/) for page-turn animations
+- TypeScript
+- pnpm
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20 or later
+- pnpm 10 or later
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone git@github.com:mariechristsagbo/tama-bookreader.git
+cd tama-bookreader
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the local development server |
+| `pnpm build` | Create an optimized production build |
+| `pnpm start` | Start the production server |
+| `pnpm lint` | Run ESLint across the project |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+app/
+├── _components/flip-book/
+│   ├── book-data.ts        # Book assets and content configuration
+│   ├── book-model.ts       # Pure pagination and spread logic
+│   ├── flip-book.tsx       # Reader state and orchestration
+│   ├── turning-sheet.tsx   # Shared page-turn animation
+│   └── ...                 # Surfaces, controls, and responsive helpers
+├── globals.css             # Global styles and visual design tokens
+├── layout.tsx              # Metadata and root layout
+└── page.tsx                # Application entry page
+public/book/                # Cover and page images
+```
 
-## Deploy on Vercel
+## Using Another Book
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The reader receives a `BookDefinition`, so its content can be replaced without changing the animation or navigation components.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Add the cover and page assets to `public/book/`.
+2. Update the definition in `app/_components/flip-book/book-data.ts`.
+3. Keep the pages ordered in the `pages` array.
+4. Update the accessible labels to describe the new book.
+
+The navigation model supports both odd and even page counts.
+
+## Quality Checks
+
+Before opening a pull request, run:
+
+```bash
+pnpm lint
+pnpm build
+```
+
+## Design Reference
+
+This project is an independent implementation inspired by the [2D Flipbook Framer reference](https://2d-flipbook.framer.website/).
+
+Book cover and page imagery belong to their respective rights holders and are included here for visual demonstration purposes.
