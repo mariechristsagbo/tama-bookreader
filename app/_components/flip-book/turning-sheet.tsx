@@ -1,24 +1,30 @@
 import * as m from "motion/react-m";
 import { PageSurface } from "./page-surface";
-import type { Direction, PageAsset } from "./types";
+import type {
+  Direction,
+  PageDescriptor,
+  PageRenderer,
+} from "./types";
 
 export const TURN_DURATION = 0.56;
 
-type TurningSheetProps = {
-  back: PageAsset | null;
+type TurningSheetProps<Page extends PageDescriptor> = {
+  back: Page | null;
   className: string;
   direction: Direction;
-  front: PageAsset | null;
+  front: Page | null;
   onComplete: () => void;
+  renderPage: PageRenderer<Page>;
 };
 
-export function TurningSheet({
+export function TurningSheet<Page extends PageDescriptor>({
   back,
   className,
   direction,
   front,
   onComplete,
-}: TurningSheetProps) {
+  renderPage,
+}: TurningSheetProps<Page>) {
   const turnsForward = direction === 1;
   const surfaceClassName =
     "rounded-[var(--book-page-radius)] [backface-visibility:hidden] shadow-[var(--book-turn-shadow)]";
@@ -37,10 +43,15 @@ export function TurningSheet({
       }}
       onAnimationComplete={onComplete}
     >
-      <PageSurface asset={front} className={surfaceClassName} />
+      <PageSurface
+        asset={front}
+        className={surfaceClassName}
+        renderPage={renderPage}
+      />
       <PageSurface
         asset={back}
         className={`${surfaceClassName} [transform:rotateY(180deg)]`}
+        renderPage={renderPage}
       />
     </m.div>
   );

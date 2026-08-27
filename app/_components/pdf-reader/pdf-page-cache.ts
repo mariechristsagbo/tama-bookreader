@@ -1,5 +1,5 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { PdfPageAsset } from "./types";
+import type { PdfPageAsset } from "../book-sources/types";
 
 const PDF_PAGE_WIDTH = 1400;
 const pageCaches = new WeakMap<PDFDocumentProxy, Map<number, Promise<string>>>();

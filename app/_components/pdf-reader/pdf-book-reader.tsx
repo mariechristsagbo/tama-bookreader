@@ -3,13 +3,15 @@
 import type { ChangeEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
+import { ReaderPage } from "../book-sources/page-renderer";
+import type { ReaderPageAsset } from "../book-sources/types";
 import { FlipBook } from "../flip-book/flip-book";
-import { releasePdfDocument } from "../flip-book/pdf-page-cache";
 import type { BookDefinition } from "../flip-book/types";
 import { loadPdfBook, MAX_PDF_SIZE } from "./pdf-loader";
+import { releasePdfDocument } from "./pdf-page-cache";
 
 type PdfBookReaderProps = {
-  initialBook: BookDefinition;
+  initialBook: BookDefinition<ReaderPageAsset>;
 };
 
 function validatePdf(file: File) {
@@ -100,7 +102,7 @@ export function PdfBookReader({ initialBook }: PdfBookReaderProps) {
           </p>
         ) : null}
 
-        <FlipBook key={book.id} book={book} />
+        <FlipBook key={book.id} book={book} renderPage={ReaderPage} />
       </div>
     </main>
   );

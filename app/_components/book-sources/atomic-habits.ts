@@ -1,4 +1,5 @@
-import type { BookDefinition, PageAsset } from "./types";
+import type { BookDefinition } from "../flip-book/types";
+import type { ImagePageAsset } from "./types";
 
 const TOTAL_PAGES = 28;
 
@@ -25,23 +26,25 @@ function makePlaceholderPage(page: number) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-const pages: readonly PageAsset[] = Array.from(
+const pages: readonly ImagePageAsset[] = Array.from(
   { length: TOTAL_PAGES },
   (_, index) => {
     const page = index + 1;
 
     return {
       alt: `Atomic Habits page ${page}`,
-      kind: "image" as const,
+      id: `atomic-habits-page-${page}`,
+      kind: "image",
       src: REAL_PAGES[page] ?? makePlaceholderPage(page),
     };
   },
 );
 
-export const ATOMIC_HABITS_BOOK: BookDefinition = {
+export const ATOMIC_HABITS_BOOK: BookDefinition<ImagePageAsset> = {
   ariaLabel: "Atomic Habits flip book",
   cover: {
     alt: "Atomic Habits book cover",
+    id: "atomic-habits-cover",
     kind: "image",
     src: "/book/cover.png",
   },

@@ -1,38 +1,37 @@
-import type { PDFDocumentProxy } from "pdfjs-dist";
+import type { ComponentType } from "react";
 
 export type Direction = -1 | 1;
 
-export type ImagePageAsset = {
+export type PageDescriptor = {
   alt: string;
-  kind: "image";
-  src: string;
+  id: string;
 };
 
-export type PdfPageAsset = {
-  alt: string;
-  document: PDFDocumentProxy;
-  kind: "pdf";
-  pageNumber: number;
+export type PageRendererProps<Page extends PageDescriptor> = {
+  asset: Page;
+  priority: boolean;
 };
 
-export type PageAsset = ImagePageAsset | PdfPageAsset;
+export type PageRenderer<Page extends PageDescriptor> = ComponentType<
+  PageRendererProps<Page>
+>;
 
-export type BookDefinition = {
+export type BookDefinition<Page extends PageDescriptor = PageDescriptor> = {
   ariaLabel: string;
-  cover: PageAsset;
+  cover: Page;
   id: string;
   pageNumbering?: {
     offset: number;
     total: number;
   };
-  pages: readonly PageAsset[];
+  pages: readonly Page[];
   title: string;
 };
 
-export type Spread = {
+export type Spread<Page extends PageDescriptor = PageDescriptor> = {
   label: string;
-  left: PageAsset | null;
-  right: PageAsset | null;
+  left: Page | null;
+  right: Page | null;
 };
 
 export type Turn = {

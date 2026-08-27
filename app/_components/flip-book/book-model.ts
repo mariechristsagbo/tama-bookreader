@@ -1,6 +1,14 @@
-import type { BookDefinition, Direction, Spread } from "./types";
+import type {
+  BookDefinition,
+  Direction,
+  PageDescriptor,
+  Spread,
+} from "./types";
 
-export function getPage(book: BookDefinition, page: number) {
+export function getPage<Page extends PageDescriptor>(
+  book: BookDefinition<Page>,
+  page: number,
+) {
   return page > 0 && page <= book.pages.length
     ? book.pages[page - 1]
     : null;
@@ -15,15 +23,23 @@ function getLastSpreadStart(totalPages: number) {
   return totalPages % 2 === 0 ? totalPages - 1 : totalPages;
 }
 
-function getPageLabel(book: BookDefinition, page: number) {
+function getPageLabel<Page extends PageDescriptor>(
+  book: BookDefinition<Page>,
+  page: number,
+) {
   return page + (book.pageNumbering?.offset ?? 0);
 }
 
-function getTotalPageLabel(book: BookDefinition) {
+function getTotalPageLabel<Page extends PageDescriptor>(
+  book: BookDefinition<Page>,
+) {
   return book.pageNumbering?.total ?? book.pages.length;
 }
 
-export function getSpread(book: BookDefinition, page: number): Spread {
+export function getSpread<Page extends PageDescriptor>(
+  book: BookDefinition<Page>,
+  page: number,
+): Spread<Page> {
   if (page === 0) {
     return { label: "Cover", left: null, right: book.cover };
   }
@@ -38,7 +54,7 @@ export function getSpread(book: BookDefinition, page: number): Spread {
 }
 
 export function getTargetPage(
-  book: BookDefinition,
+  book: BookDefinition<PageDescriptor>,
   currentPage: number,
   direction: Direction,
   isMobile: boolean,
@@ -60,8 +76,8 @@ export function getTargetPage(
   return Math.max(1, getSpreadStart(currentPage) - 2);
 }
 
-export function getBookStatus(
-  book: BookDefinition,
+export function getBookStatus<Page extends PageDescriptor>(
+  book: BookDefinition<Page>,
   currentPage: number,
   isMobile: boolean,
 ) {

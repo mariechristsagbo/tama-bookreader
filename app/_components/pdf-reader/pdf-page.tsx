@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import { PageImage } from "../book-sources/page-image";
+import type { PdfPageAsset } from "../book-sources/types";
 import { getPdfPageUrl } from "./pdf-page-cache";
-import type { PdfPageAsset } from "./types";
 
 type PdfPageProps = {
   asset: PdfPageAsset;
@@ -38,14 +38,7 @@ export function PdfPage({ asset }: PdfPageProps) {
   }
 
   return src ? (
-    <Image
-      src={src}
-      alt={asset.alt}
-      fill
-      sizes="(max-width: 809px) calc(100vw - 32px), 540px"
-      className="object-contain"
-      unoptimized
-    />
+    <PageImage src={src} alt={asset.alt} fit="contain" />
   ) : (
     <div
       role="status"

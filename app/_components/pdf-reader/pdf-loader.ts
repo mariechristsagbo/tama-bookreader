@@ -1,8 +1,6 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type {
-  BookDefinition,
-  PdfPageAsset,
-} from "../flip-book/types";
+import type { PdfPageAsset, ReaderPageAsset } from "../book-sources/types";
+import type { BookDefinition } from "../flip-book/types";
 
 export const MAX_PDF_SIZE = 50 * 1024 * 1024;
 
@@ -18,6 +16,7 @@ function createPageAsset(
   return {
     alt: `${title}, page ${pageNumber}`,
     document,
+    id: `${title}-pdf-page-${pageNumber}`,
     kind: "pdf",
     pageNumber,
   };
@@ -40,7 +39,7 @@ export async function loadPdfBook(file: File) {
     createPageAsset(document, index + 1, title),
   );
 
-  const book: BookDefinition = {
+  const book: BookDefinition<ReaderPageAsset> = {
     ariaLabel: `${title} PDF flip book`,
     cover: allPages[0],
     id: `${file.name}-${file.size}-${file.lastModified}`,

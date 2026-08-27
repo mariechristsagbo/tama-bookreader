@@ -1,18 +1,24 @@
 import { getPage, getSpread } from "./book-model";
 import { PageSurface } from "./page-surface";
-import type { BookDefinition } from "./types";
+import type {
+  BookDefinition,
+  PageDescriptor,
+  PageRenderer,
+} from "./types";
 
-type StaticBookProps = {
-  book: BookDefinition;
+type StaticBookProps<Page extends PageDescriptor> = {
+  book: BookDefinition<Page>;
   currentPage: number;
   isMobile: boolean;
+  renderPage: PageRenderer<Page>;
 };
 
-export function StaticBook({
+export function StaticBook<Page extends PageDescriptor>({
   book,
   currentPage,
   isMobile,
-}: StaticBookProps) {
+  renderPage,
+}: StaticBookProps<Page>) {
   if (isMobile) {
     const asset = currentPage === 0 ? book.cover : getPage(book, currentPage);
 
@@ -22,6 +28,7 @@ export function StaticBook({
           asset={asset}
           className="rounded-[var(--book-page-radius)]"
           priority
+          renderPage={renderPage}
         />
       </div>
     );
@@ -37,6 +44,7 @@ export function StaticBook({
             asset={spread.left}
             className="rounded-l-[var(--book-page-radius)]"
             priority
+            renderPage={renderPage}
           />
         </div>
       ) : null}
@@ -46,6 +54,7 @@ export function StaticBook({
             asset={spread.right}
             className="rounded-r-[var(--book-page-radius)]"
             priority
+            renderPage={renderPage}
           />
         </div>
       ) : null}

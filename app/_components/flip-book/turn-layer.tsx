@@ -2,21 +2,28 @@ import * as m from "motion/react-m";
 import { getPage, getSpread } from "./book-model";
 import { PageSurface } from "./page-surface";
 import { TURN_DURATION, TurningSheet } from "./turning-sheet";
-import type { BookDefinition, Turn } from "./types";
+import type {
+  BookDefinition,
+  PageDescriptor,
+  PageRenderer,
+  Turn,
+} from "./types";
 
-type TurnLayerProps = {
-  book: BookDefinition;
+type TurnLayerProps<Page extends PageDescriptor> = {
+  book: BookDefinition<Page>;
   isMobile: boolean;
   onComplete: () => void;
+  renderPage: PageRenderer<Page>;
   turn: Turn;
 };
 
-export function TurnLayer({
+export function TurnLayer<Page extends PageDescriptor>({
   book,
   isMobile,
   onComplete,
+  renderPage,
   turn,
-}: TurnLayerProps) {
+}: TurnLayerProps<Page>) {
   if (isMobile) {
     return (
       <TurningSheet
@@ -25,6 +32,7 @@ export function TurnLayer({
         front={turn.from === 0 ? book.cover : getPage(book, turn.from)}
         back={turn.to === 0 ? book.cover : getPage(book, turn.to)}
         onComplete={onComplete}
+        renderPage={renderPage}
       />
     );
   }
@@ -58,6 +66,7 @@ export function TurnLayer({
                 ? "rounded-l-[var(--book-page-radius)]"
                 : "rounded-r-[var(--book-page-radius)]"
             }
+            renderPage={renderPage}
           />
         ) : (
           <div className="absolute inset-0 bg-[var(--book-background)]" />
@@ -72,6 +81,7 @@ export function TurnLayer({
         front={front}
         back={back}
         onComplete={onComplete}
+        renderPage={renderPage}
       />
     </>
   );

@@ -16,13 +16,23 @@ import {
 } from "./mobile-store";
 import { StaticBook } from "./static-book";
 import { TurnLayer } from "./turn-layer";
-import type { BookDefinition, Direction, Turn } from "./types";
+import type {
+  BookDefinition,
+  Direction,
+  PageDescriptor,
+  PageRenderer,
+  Turn,
+} from "./types";
 
-type FlipBookProps = {
-  book: BookDefinition;
+type FlipBookProps<Page extends PageDescriptor> = {
+  book: BookDefinition<Page>;
+  renderPage: PageRenderer<Page>;
 };
 
-export function FlipBook({ book }: FlipBookProps) {
+export function FlipBook<Page extends PageDescriptor>({
+  book,
+  renderPage,
+}: FlipBookProps<Page>) {
   const isMobile = useSyncExternalStore(
     subscribeToMobileQuery,
     getMobileSnapshot,
@@ -64,6 +74,7 @@ export function FlipBook({ book }: FlipBookProps) {
               book={book}
               currentPage={currentPage}
               isMobile={isMobile}
+              renderPage={renderPage}
             />
             {turn ? (
               <TurnLayer
@@ -71,6 +82,7 @@ export function FlipBook({ book }: FlipBookProps) {
                 isMobile={isMobile}
                 turn={turn}
                 onComplete={() => setTurn(null)}
+                renderPage={renderPage}
               />
             ) : null}
             <PageHotspots

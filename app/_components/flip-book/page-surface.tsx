@@ -1,34 +1,27 @@
-import Image from "next/image";
-import { PdfPage } from "./pdf-page";
-import type { PageAsset } from "./types";
+import type {
+  PageDescriptor,
+  PageRenderer,
+} from "./types";
 
-type PageSurfaceProps = {
-  asset: PageAsset | null;
+type PageSurfaceProps<Page extends PageDescriptor> = {
+  asset: Page | null;
   className?: string;
   priority?: boolean;
+  renderPage: PageRenderer<Page>;
 };
 
-export function PageSurface({
+export function PageSurface<Page extends PageDescriptor>({
   asset,
   className = "",
   priority = false,
-}: PageSurfaceProps) {
+  renderPage: PageContent,
+}: PageSurfaceProps<Page>) {
   return (
     <div
       className={`absolute inset-0 overflow-hidden bg-[var(--book-page-surface)] ${className}`}
     >
-      {asset?.kind === "image" ? (
-        <Image
-          src={asset.src}
-          alt={asset.alt}
-          fill
-          priority={priority}
-          sizes="(max-width: 809px) calc(100vw - 32px), 540px"
-          className="object-cover"
-          unoptimized
-        />
-      ) : asset?.kind === "pdf" ? (
-        <PdfPage asset={asset} />
+      {asset ? (
+        <PageContent key={asset.id} asset={asset} priority={priority} />
       ) : null}
     </div>
   );
