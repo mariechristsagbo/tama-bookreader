@@ -2,6 +2,8 @@
 
 An interactive, responsive 2D/3D PDF reader built with Next.js, Tailwind CSS, Motion, and PDF.js. Open a local PDF or use image-based pages to recreate the feel of turning a physical book across desktop and mobile devices.
 
+<img width="2940" height="1766" alt="Tama Book Reader preview" src="https://github.com/user-attachments/assets/84093b11-bbaf-41f7-b739-62258ae72442" />
+
 ## Demo
 
 ### Desktop
@@ -66,12 +68,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```text
 app/
-├── _components/flip-book/
-│   ├── book-data.ts        # Book assets and content configuration
-│   ├── book-model.ts       # Pure pagination and spread logic
-│   ├── flip-book.tsx       # Reader state and orchestration
-│   ├── turning-sheet.tsx   # Shared page-turn animation
-│   └── ...                 # Surfaces, controls, and responsive helpers
+├── _components/
+│   ├── book-sources/       # Image/PDF page adapters and sample content
+│   ├── flip-book/          # Format-agnostic navigation and page turns
+│   └── pdf-reader/         # PDF loading, rendering, caching, and cleanup
 ├── globals.css             # Global styles and visual design tokens
 ├── layout.tsx              # Metadata and root layout
 └── page.tsx                # Application entry page
