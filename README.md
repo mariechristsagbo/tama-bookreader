@@ -8,10 +8,6 @@ An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Mot
 
 ![Desktop flipbook demo](./public/demo/desktop.gif)
 
-### Mobile
-
-![Mobile flipbook demo](./public/demo/mobile.gif)
-
 ## Features
 
 - Realistic 3D page-turn animations
