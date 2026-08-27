@@ -1,0 +1,81 @@
+name: Feature request
+description: Propose a focused improvement for Tama Book Reader
+title: "feat(scope): "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep the issue focused on one user-facing outcome. Use sentence case for every section heading.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the feature in a few clear sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Explain the user problem this feature should solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the expected behavior from the user perspective.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List observable and verifiable requirements.
+      value: |
+        - [ ] The primary user flow works as described
+        - [ ] Mobile and desktop behavior is covered
+        - [ ] Keyboard and accessibility behavior is covered
+        - [ ] Tests are added or updated
+        - [ ] Documentation is updated when required
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical notes
+      description: Add relevant architecture, performance, or implementation guidance.
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: State what this issue intentionally does not include.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Link required issues or write None.
+      value: None
+
+  - type: checkboxes
+    id: definition-of-done
+    attributes:
+      label: Definition of done
+      options:
+        - label: ESLint passes
+          required: true
+        - label: TypeScript passes
+          required: true
+        - label: Production build passes
+          required: true
+        - label: The feature is manually verified
+          required: true
