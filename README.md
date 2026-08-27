@@ -4,7 +4,13 @@ An interactive, responsive 2D flipbook built with Next.js, Tailwind CSS, and Mot
 
 ## Demo
 
-Demo videos will be added soon.
+### Desktop
+
+https://github.com/user-attachments/assets/de9a3b54-2a50-418c-b927-4f3fc7fedfa0
+
+### Mobile
+
+https://github.com/user-attachments/assets/c6f48825-558a-4162-a0ca-bb90ed34ba95
 
 ## Features
 
